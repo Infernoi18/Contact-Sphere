@@ -10,10 +10,12 @@ import com.example.contactsphere.model.Contact
 class ContactAdapter(
     private var fullList: List<Contact>,
     private val onItemClick: (Contact) -> Unit,
-    private val onCallClick: (Contact) -> Unit
+    private val onCallClick: (Contact) -> Unit,
+    private val onFavoriteClick: (Contact) -> Unit
 ) : RecyclerView.Adapter<ContactAdapter.ContactViewHolder>() {
 
     private var displayedList: List<Contact> = fullList.toList()
+    private var currentQuery: String = ""
 
     inner class ContactViewHolder(val binding: ItemContactBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -33,10 +35,16 @@ class ContactAdapter(
             tvName.text = contact.name
             tvRole.text = contact.role
             tvPhone.text = contact.phone
-            ivFavorite.visibility = if (contact.isFavorite) View.VISIBLE else View.GONE
+            
+            if (contact.isFavorite) {
+                ivFavorite.setImageResource(com.example.contactsphere.R.drawable.ic_star_filled)
+            } else {
+                ivFavorite.setImageResource(com.example.contactsphere.R.drawable.ic_star_outline)
+            }
 
             root.setOnClickListener { onItemClick(contact) }
             ivCallQuick.setOnClickListener { onCallClick(contact) }
+            ivFavorite.setOnClickListener { onFavoriteClick(contact) }
         }
     }
 
@@ -44,11 +52,11 @@ class ContactAdapter(
 
     fun updateList(newList: List<Contact>) {
         fullList = newList
-        displayedList = newList
-        notifyDataSetChanged()
+        filter(currentQuery)
     }
 
     fun filter(query: String) {
+        currentQuery = query
         displayedList = if (query.isEmpty()) {
             fullList
         } else {

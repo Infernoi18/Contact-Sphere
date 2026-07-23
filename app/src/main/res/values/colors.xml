@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">#4A6FA5</color>
-    <color name="primary_dark">#33507A</color>
-    <color name="accent">#FF7E5F</color>
-    <color name="background">#F5F7FA</color>
+    <!-- Modern Gradient Palette -->
+    <color name="primary">#667eea</color>
+    <color name="primary_variant">#764ba2</color>
+    <color name="secondary">#fd746c</color>
+    <color name="secondary_variant">#ff9068</color>
+
+    <color name="grad_start">#667eea</color>
+    <color name="grad_end">#764ba2</color>
+
+    <color name="background">#F0F2F5</color>
     <color name="card_bg">#FFFFFF</color>
-    <color name="text_primary">#212B36</color>
-    <color name="text_secondary">#637381</color>
+
+    <color name="text_primary">#2D3436</color>
+    <color name="text_secondary">#636E72</color>
     <color name="white">#FFFFFF</color>
-    <color name="error">#D32F2F</color>
-    <color name="favorite">#FFB300</color>
-    <color name="stroke">#D0D5DD</color>
+    <color name="error">#FF5252</color>
+    <color name="favorite">#F1C40F</color>
+    <color name="stroke">#DFE6E9</color>
+
+    <!-- Transparent helpers -->
+    <color name="transparent_white">#80FFFFFF</color>
 </resources>

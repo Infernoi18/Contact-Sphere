@@ -45,6 +45,7 @@
             android:layout_marginStart="8dp"
             android:backgroundTint="@color/error"
             android:text="@string/btn_confirm"
-            app:cornerRadius="8dp" />
+            android:textStyle="bold"
+            app:cornerRadius="10dp" />
     </LinearLayout>
 </LinearLayout>

@@ -39,12 +39,20 @@ abstract class BaseContactFragment : Fragment() {
             },
             onCallClick = { contact ->
                 (activity as? MainActivity)?.placeCall(contact.phone)
+            },
+            onFavoriteClick = { contact ->
+                com.example.contactsphere.utils.DummyDataProvider.toggleFavorite(contact.id)
+                (activity as? MainActivity)?.refreshContacts()
             }
         )
 
         binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = this@BaseContactFragment.adapter
+        }
+
+        com.example.contactsphere.utils.DummyDataProvider.contacts.observe(viewLifecycleOwner) {
+            refreshData()
         }
 
         updateEmptyState()
@@ -65,8 +73,14 @@ abstract class BaseContactFragment : Fragment() {
         }
     }
 
+    fun refreshData() {
+        adapter.updateList(getContactsList())
+        updateEmptyState()
+    }
+
     private fun showContactBottomSheet(contact: Contact) {
         val bottomSheet = ContactDetailsBottomSheet.newInstance(
+            id = contact.id,
             name = contact.name,
             role = contact.role,
             phone = contact.phone,

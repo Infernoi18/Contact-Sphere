@@ -18,6 +18,7 @@ class ContactDetailsBottomSheet : BottomSheetDialogFragment() {
 
     companion object {
         const val TAG = "ContactDetailsBottomSheet"
+        private const val ARG_ID = "arg_id"
         private const val ARG_NAME = "arg_name"
         private const val ARG_ROLE = "arg_role"
         private const val ARG_PHONE = "arg_phone"
@@ -25,6 +26,7 @@ class ContactDetailsBottomSheet : BottomSheetDialogFragment() {
         private const val ARG_IS_FAVORITE = "arg_is_favorite"
 
         fun newInstance(
+            id: String,
             name: String,
             role: String,
             phone: String,
@@ -33,6 +35,7 @@ class ContactDetailsBottomSheet : BottomSheetDialogFragment() {
         ): ContactDetailsBottomSheet {
             val fragment = ContactDetailsBottomSheet()
             val args = Bundle().apply {
+                putString(ARG_ID, id)
                 putString(ARG_NAME, name)
                 putString(ARG_ROLE, role)
                 putString(ARG_PHONE, phone)
@@ -56,21 +59,33 @@ class ContactDetailsBottomSheet : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val id = arguments?.getString(ARG_ID) ?: ""
         val name = arguments?.getString(ARG_NAME) ?: ""
         val role = arguments?.getString(ARG_ROLE) ?: ""
         val phone = arguments?.getString(ARG_PHONE) ?: ""
         val bio = arguments?.getString(ARG_BIO) ?: ""
-        val isFavorite = arguments?.getBoolean(ARG_IS_FAVORITE) ?: false
+        var isFavorite = arguments?.getBoolean(ARG_IS_FAVORITE) ?: false
 
         binding.tvBsName.text = name
         binding.tvBsRole.text = role
         binding.tvBsPhone.text = phone
         binding.tvBsBio.text = bio
 
-        if (isFavorite) {
-            binding.ivFavorite.setImageResource(R.drawable.ic_star_filled)
-        } else {
-            binding.ivFavorite.setImageResource(R.drawable.ic_star_outline)
+        val updateFavoriteUI = { fav: Boolean ->
+            if (fav) {
+                binding.ivFavorite.setImageResource(R.drawable.ic_star_filled)
+            } else {
+                binding.ivFavorite.setImageResource(R.drawable.ic_star_outline)
+            }
+        }
+
+        updateFavoriteUI(isFavorite)
+
+        binding.ivFavorite.setOnClickListener {
+            com.example.contactsphere.utils.DummyDataProvider.toggleFavorite(id)
+            isFavorite = !isFavorite
+            updateFavoriteUI(isFavorite)
+            (activity as? MainActivity)?.refreshContacts()
         }
 
         binding.tvReadMore.setOnClickListener {

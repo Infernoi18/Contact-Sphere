@@ -128,6 +128,14 @@ class MainActivity : AppCompatActivity() {
         ).show()
     }
 
+    fun refreshContacts() {
+        supportFragmentManager.fragments.forEach { fragment ->
+            if (fragment is BaseContactFragment) {
+                fragment.refreshData()
+            }
+        }
+    }
+
     fun placeCall(phoneNumber: String) {
         pendingPhoneCall = phoneNumber
         if (PermissionUtils.hasCallPermission(this)) {

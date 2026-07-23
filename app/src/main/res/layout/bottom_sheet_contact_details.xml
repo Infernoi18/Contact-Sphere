@@ -11,7 +11,7 @@
         android:layout_width="40dp"
         android:layout_height="4dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="24dp"
         android:background="@color/stroke" />
 
     <LinearLayout
@@ -20,18 +20,19 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <ImageView
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:background="@drawable/bg_button"
-            android:padding="12dp"
+        <com.google.android.material.imageview.ShapeableImageView
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:background="@color/background"
+            android:padding="16dp"
             android:src="@drawable/ic_person"
-            app:tint="@color/white" />
+            app:shapeAppearanceOverlay="@style/CircleImage"
+            app:tint="@color/grad_start" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="20dp"
             android:layout_weight="1"
             android:orientation="vertical">
 
@@ -40,76 +41,83 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/text_primary"
-                android:textSize="20sp"
+                android:textSize="22sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvBsRole"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/primary"
-                android:textSize="14sp" />
+                android:layout_marginTop="2dp"
+                android:textColor="@color/grad_start"
+                android:textSize="16sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <ImageView
             android:id="@+id/ivFavorite"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:padding="4dp"
             android:src="@drawable/ic_star_filled"
-            app:tint="@color/primary" />
+            app:tint="@color/favorite" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/tvBsPhone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:textColor="@color/text_primary"
-        android:textSize="15sp"
+        android:textSize="17sp"
         android:textStyle="bold" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:text="@string/label_about_bio"
         android:textColor="@color/text_secondary"
-        android:textSize="12sp"
-        android:textStyle="bold" />
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:textAllCaps="true"
+        android:letterSpacing="0.05" />
 
     <TextView
         android:id="@+id/tvBsBio"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="6dp"
         android:ellipsize="end"
-        android:maxLines="2"
+        android:lineSpacingExtra="4dp"
+        android:maxLines="3"
         android:textColor="@color/text_primary"
-        android:textSize="14sp" />
+        android:textSize="15sp" />
 
     <TextView
         android:id="@+id/tvReadMore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="6dp"
         android:paddingVertical="4dp"
         android:text="@string/read_more"
-        android:textColor="@color/primary"
-        android:textSize="13sp"
+        android:textColor="@color/grad_start"
+        android:textSize="14sp"
         android:textStyle="bold" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnCall"
         android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:layout_marginTop="20dp"
-        android:backgroundTint="@color/primary"
+        android:layout_height="56dp"
+        android:layout_marginTop="28dp"
+        android:backgroundTint="@color/grad_start"
         android:text="@string/btn_call_now"
         android:textSize="16sp"
-        app:cornerRadius="10dp"
+        android:textStyle="bold"
+        app:cornerRadius="14dp"
         app:icon="@drawable/ic_call"
         app:iconGravity="textStart"
+        app:iconPadding="12dp"
         app:iconTint="@color/white" />
 
 </LinearLayout>
