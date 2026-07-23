@@ -52,6 +52,8 @@ class MainActivity : AppCompatActivity() {
         val username = intent.getStringExtra("EXTRA_USERNAME") ?: prefsManager.getUsername()
         supportActionBar?.subtitle = getString(R.string.logged_in_as, username)
 
+        DummyDataProvider.loadContacts(this, username)
+
         setupViewPager()
         simulateDataLoading()
 
@@ -74,7 +76,7 @@ class MainActivity : AppCompatActivity() {
             val bio = dialogBinding.etBio.text.toString().trim()
 
             if (name.isNotEmpty() && phone.isNotEmpty() && role.isNotEmpty() && bio.isNotEmpty()) {
-                DummyDataProvider.addContact(name, phone, role, bio)
+                DummyDataProvider.addContact(this, name, phone, role, bio)
                 Toast.makeText(this, getString(R.string.contact_added), Toast.LENGTH_SHORT).show()
                 dialog.dismiss()
             } else {

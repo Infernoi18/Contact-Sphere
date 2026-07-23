@@ -2,6 +2,9 @@ package com.example.contactsphere.utils
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.example.contactsphere.model.Contact
+import org.json.JSONArray
+import org.json.JSONObject
 
 class PrefsManager(context: Context) {
 
@@ -61,5 +64,44 @@ class PrefsManager(context: Context) {
                 apply()
             }
         }
+    }
+
+    fun saveContacts(username: String, contacts: List<Contact>) {
+        val jsonArray = JSONArray()
+        contacts.forEach { contact ->
+            val jsonObj = JSONObject()
+            jsonObj.put("id", contact.id)
+            jsonObj.put("name", contact.name)
+            jsonObj.put("phone", contact.phone)
+            jsonObj.put("role", contact.role)
+            jsonObj.put("bio", contact.bio)
+            jsonObj.put("isFavorite", contact.isFavorite)
+            jsonArray.put(jsonObj)
+        }
+        prefs.edit().putString("contacts_$username", jsonArray.toString()).apply()
+    }
+
+    fun getContacts(username: String): List<Contact> {
+        val jsonString = prefs.getString("contacts_$username", null) ?: return emptyList()
+        val contacts = mutableListOf<Contact>()
+        try {
+            val jsonArray = JSONArray(jsonString)
+            for (i in 0 until jsonArray.length()) {
+                val jsonObj = jsonArray.getJSONObject(i)
+                contacts.add(
+                    Contact(
+                        id = jsonObj.getString("id"),
+                        name = jsonObj.getString("name"),
+                        phone = jsonObj.getString("phone"),
+                        role = jsonObj.getString("role"),
+                        bio = jsonObj.getString("bio"),
+                        isFavorite = jsonObj.getBoolean("isFavorite")
+                    )
+                )
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return contacts
     }
 }

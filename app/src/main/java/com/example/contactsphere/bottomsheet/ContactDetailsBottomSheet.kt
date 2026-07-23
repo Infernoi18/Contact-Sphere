@@ -82,7 +82,7 @@ class ContactDetailsBottomSheet : BottomSheetDialogFragment() {
         updateFavoriteUI(isFavorite)
 
         binding.ivFavorite.setOnClickListener {
-            com.example.contactsphere.utils.DummyDataProvider.toggleFavorite(id)
+            com.example.contactsphere.utils.DummyDataProvider.toggleFavorite(requireContext(), id)
             isFavorite = !isFavorite
             updateFavoriteUI(isFavorite)
             (activity as? MainActivity)?.refreshContacts()

@@ -45,7 +45,7 @@ abstract class BaseContactFragment : Fragment() {
                 (activity as? MainActivity)?.placeCall(contact.phone)
             },
             onFavoriteClick = { contact ->
-                com.example.contactsphere.utils.DummyDataProvider.toggleFavorite(contact.id)
+                com.example.contactsphere.utils.DummyDataProvider.toggleFavorite(requireContext(), contact.id)
                 (activity as? MainActivity)?.refreshContacts()
             }
         )
@@ -77,7 +77,7 @@ abstract class BaseContactFragment : Fragment() {
             .setTitle(getString(R.string.dialog_delete_title))
             .setMessage(getString(R.string.dialog_delete_message, contact.name))
             .setPositiveButton(getString(R.string.btn_delete)) { _, _ ->
-                com.example.contactsphere.utils.DummyDataProvider.deleteContact(contact.id)
+                com.example.contactsphere.utils.DummyDataProvider.deleteContact(requireContext(), contact.id)
                 refreshData()
             }
             .setNegativeButton(getString(R.string.btn_cancel), null)
