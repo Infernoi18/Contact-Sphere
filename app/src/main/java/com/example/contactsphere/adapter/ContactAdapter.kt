@@ -10,6 +10,7 @@ import com.example.contactsphere.model.Contact
 class ContactAdapter(
     private var fullList: List<Contact>,
     private val onItemClick: (Contact) -> Unit,
+    private val onItemLongClick: (Contact) -> Unit,
     private val onCallClick: (Contact) -> Unit,
     private val onFavoriteClick: (Contact) -> Unit
 ) : RecyclerView.Adapter<ContactAdapter.ContactViewHolder>() {
@@ -45,6 +46,10 @@ class ContactAdapter(
             }
 
             root.setOnClickListener { onItemClick(contact) }
+            root.setOnLongClickListener {
+                onItemLongClick(contact)
+                true
+            }
             ivCallQuick.setOnClickListener { onCallClick(contact) }
             ivFavorite.setOnClickListener { onFavoriteClick(contact) }
         }

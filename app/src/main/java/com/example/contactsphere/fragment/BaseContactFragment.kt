@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.contactsphere.MainActivity
+import com.example.contactsphere.R
 import com.example.contactsphere.adapter.ContactAdapter
 import com.example.contactsphere.bottomsheet.ContactDetailsBottomSheet
 import com.example.contactsphere.databinding.FragmentContactListBinding
@@ -37,6 +38,9 @@ abstract class BaseContactFragment : Fragment() {
             onItemClick = { contact ->
                 showContactBottomSheet(contact)
             },
+            onItemLongClick = { contact ->
+                showDeleteConfirmation(contact)
+            },
             onCallClick = { contact ->
                 (activity as? MainActivity)?.placeCall(contact.phone)
             },
@@ -66,6 +70,18 @@ abstract class BaseContactFragment : Fragment() {
     fun applySortAndFilter(sortOrder: String, roleFilter: String) {
         adapter.applySortAndFilter(sortOrder, roleFilter)
         updateEmptyState()
+    }
+
+    private fun showDeleteConfirmation(contact: Contact) {
+        com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(R.string.dialog_delete_title))
+            .setMessage(getString(R.string.dialog_delete_message, contact.name))
+            .setPositiveButton(getString(R.string.btn_delete)) { _, _ ->
+                com.example.contactsphere.utils.DummyDataProvider.deleteContact(contact.id)
+                refreshData()
+            }
+            .setNegativeButton(getString(R.string.btn_cancel), null)
+            .show()
     }
 
     private fun updateEmptyState() {

@@ -61,5 +61,8 @@
     <!-- Dialogs -->
     <string name="btn_cancel">Cancel</string>
     <string name="btn_confirm">Confirm</string>
+    <string name="btn_delete">Delete</string>
+    <string name="dialog_delete_title">Delete Contact</string>
+    <string name="dialog_delete_message">Are you sure you want to permanently delete %1$s? This action cannot be undone.</string>
     <string name="loading">Loading...</string>
 </resources>
