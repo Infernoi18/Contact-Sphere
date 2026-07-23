@@ -88,4 +88,17 @@ object DummyDataProvider {
             _contacts.postValue(contactsList.toList())
         }
     }
+
+    fun addContact(name: String, phone: String, role: String, bio: String) {
+        val newContact = Contact(
+            id = (contactsList.size + 1).toString(),
+            name = name,
+            phone = phone,
+            role = role,
+            bio = bio,
+            isFavorite = false
+        )
+        contactsList.add(newContact)
+        _contacts.postValue(contactsList.toList())
+    }
 }

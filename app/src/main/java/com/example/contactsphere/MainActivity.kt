@@ -12,11 +12,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import com.example.contactsphere.adapter.ViewPagerAdapter
 import com.example.contactsphere.databinding.ActivityMainBinding
+import com.example.contactsphere.databinding.DialogAddContactBinding
 import com.example.contactsphere.dialog.CustomAlertDialog
 import com.example.contactsphere.dialog.CustomProgressDialog
 import com.example.contactsphere.fragment.BaseContactFragment
+import com.example.contactsphere.utils.DummyDataProvider
 import com.example.contactsphere.utils.PermissionUtils
 import com.example.contactsphere.utils.PrefsManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayoutMediator
 
 class MainActivity : AppCompatActivity() {
@@ -24,6 +27,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var prefsManager: PrefsManager
     private var pendingPhoneCall: String? = null
+
+    private var currentSortOrder = "AZ"
+    private var currentRoleFilter = "All"
 
     private val requestCallPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
@@ -48,6 +54,39 @@ class MainActivity : AppCompatActivity() {
 
         setupViewPager()
         simulateDataLoading()
+
+        binding.fabAddContact.setOnClickListener {
+            showAddContactDialog()
+        }
+    }
+
+    private fun showAddContactDialog() {
+        val dialogBinding = DialogAddContactBinding.inflate(layoutInflater)
+        val dialog = MaterialAlertDialogBuilder(this)
+            .setView(dialogBinding.root)
+            .setCancelable(true)
+            .create()
+
+        dialogBinding.btnSave.setOnClickListener {
+            val name = dialogBinding.etName.text.toString().trim()
+            val phone = dialogBinding.etPhone.text.toString().trim()
+            val role = dialogBinding.etRole.text.toString().trim()
+            val bio = dialogBinding.etBio.text.toString().trim()
+
+            if (name.isNotEmpty() && phone.isNotEmpty() && role.isNotEmpty() && bio.isNotEmpty()) {
+                DummyDataProvider.addContact(name, phone, role, bio)
+                Toast.makeText(this, getString(R.string.contact_added), Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+            } else {
+                Toast.makeText(this, getString(R.string.error_empty_fields), Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        dialogBinding.btnCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
     private fun setupViewPager() {
@@ -97,11 +136,58 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: android.view.MenuItem): Boolean {
         return when (item.itemId) {
+            R.id.action_filter -> {
+                showFilterDialog()
+                true
+            }
+            R.id.action_sort -> {
+                showSortDialog()
+                true
+            }
             R.id.action_logout -> {
                 showLogoutConfirmation()
                 true
             }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun showFilterDialog() {
+        val roles = DummyDataProvider.getDummyContacts().map { it.role }.distinct().toMutableList()
+        roles.add(0, getString(R.string.filter_none))
+        
+        val items = roles.toTypedArray()
+        var checkedItem = roles.indexOf(currentRoleFilter)
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.menu_filter))
+            .setSingleChoiceItems(items, checkedItem) { dialog, which ->
+                currentRoleFilter = items[which]
+                applySortAndFilter()
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun showSortDialog() {
+        val options = arrayOf(getString(R.string.sort_az), getString(R.string.sort_za))
+        var checkedItem = if (currentSortOrder == "AZ") 0 else 1
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.menu_sort))
+            .setSingleChoiceItems(options, checkedItem) { dialog, which ->
+                currentSortOrder = if (which == 0) "AZ" else "ZA"
+                applySortAndFilter()
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun applySortAndFilter() {
+        supportFragmentManager.fragments.forEach { fragment ->
+            if (fragment is BaseContactFragment) {
+                fragment.applySortAndFilter(currentSortOrder, currentRoleFilter)
+            }
         }
     }
 

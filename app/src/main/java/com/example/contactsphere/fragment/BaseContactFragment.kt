@@ -63,6 +63,11 @@ abstract class BaseContactFragment : Fragment() {
         updateEmptyState()
     }
 
+    fun applySortAndFilter(sortOrder: String, roleFilter: String) {
+        adapter.applySortAndFilter(sortOrder, roleFilter)
+        updateEmptyState()
+    }
+
     private fun updateEmptyState() {
         if (adapter.itemCount == 0) {
             binding.tvEmptyState.visibility = View.VISIBLE

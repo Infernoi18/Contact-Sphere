@@ -28,6 +28,8 @@
     <string name="tab_favorites">Favorites</string>
     <string name="loading_directory">Fetching directory...</string>
     <string name="menu_search">Search</string>
+    <string name="menu_filter">Filter</string>
+    <string name="menu_sort">Sort</string>
     <string name="menu_logout">Logout</string>
     <string name="dialog_logout_title">Sign Out</string>
     <string name="dialog_logout_message">Are you sure you want to log out of ContactSphere?</string>
@@ -39,6 +41,22 @@
     <string name="read_less">Read Less</string>
     <string name="btn_call_now">Call Now</string>
     <string name="label_about_bio">About / Bio</string>
+
+    <!-- Add Contact -->
+    <string name="add_contact_title">Add New Contact</string>
+    <string name="hint_name">Full Name</string>
+    <string name="hint_phone">Phone Number</string>
+    <string name="hint_role">Job Role</string>
+    <string name="hint_bio">Bio/Description</string>
+    <string name="btn_save">Save Contact</string>
+    <string name="error_empty_fields">Please fill in all fields</string>
+    <string name="contact_added">Contact added successfully</string>
+    <string name="desc_add_contact">Add Contact</string>
+
+    <!-- Sort/Filter -->
+    <string name="sort_az">Name (A-Z)</string>
+    <string name="sort_za">Name (Z-A)</string>
+    <string name="filter_none">All Roles</string>
 
     <!-- Dialogs -->
     <string name="btn_cancel">Cancel</string>

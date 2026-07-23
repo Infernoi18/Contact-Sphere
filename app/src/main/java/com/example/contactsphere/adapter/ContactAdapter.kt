@@ -1,9 +1,9 @@
 package com.example.contactsphere.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.contactsphere.R
 import com.example.contactsphere.databinding.ItemContactBinding
 import com.example.contactsphere.model.Contact
 
@@ -16,6 +16,8 @@ class ContactAdapter(
 
     private var displayedList: List<Contact> = fullList.toList()
     private var currentQuery: String = ""
+    private var currentSortOrder: String = "AZ"
+    private var currentRoleFilter: String = "All"
 
     inner class ContactViewHolder(val binding: ItemContactBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -37,9 +39,9 @@ class ContactAdapter(
             tvPhone.text = contact.phone
             
             if (contact.isFavorite) {
-                ivFavorite.setImageResource(com.example.contactsphere.R.drawable.ic_star_filled)
+                ivFavorite.setImageResource(R.drawable.ic_star_filled)
             } else {
-                ivFavorite.setImageResource(com.example.contactsphere.R.drawable.ic_star_outline)
+                ivFavorite.setImageResource(R.drawable.ic_star_outline)
             }
 
             root.setOnClickListener { onItemClick(contact) }
@@ -52,20 +54,39 @@ class ContactAdapter(
 
     fun updateList(newList: List<Contact>) {
         fullList = newList
-        filter(currentQuery)
+        applySortAndFilter(currentSortOrder, currentRoleFilter)
+    }
+
+    fun applySortAndFilter(sortOrder: String, roleFilter: String) {
+        currentSortOrder = sortOrder
+        currentRoleFilter = roleFilter
+        
+        var filteredList = if (roleFilter == "All" || roleFilter == "All Roles") {
+            fullList
+        } else {
+            fullList.filter { it.role == roleFilter }
+        }
+
+        filteredList = if (sortOrder == "AZ") {
+            filteredList.sortedBy { it.name }
+        } else {
+            filteredList.sortedByDescending { it.name }
+        }
+
+        displayedList = if (currentQuery.isEmpty()) {
+            filteredList
+        } else {
+            filteredList.filter {
+                it.name.contains(currentQuery, ignoreCase = true) ||
+                        it.role.contains(currentQuery, ignoreCase = true) ||
+                        it.phone.contains(currentQuery, ignoreCase = true)
+            }
+        }
+        notifyDataSetChanged()
     }
 
     fun filter(query: String) {
         currentQuery = query
-        displayedList = if (query.isEmpty()) {
-            fullList
-        } else {
-            fullList.filter {
-                it.name.contains(query, ignoreCase = true) ||
-                        it.role.contains(query, ignoreCase = true) ||
-                        it.phone.contains(query, ignoreCase = true)
-            }
-        }
-        notifyDataSetChanged()
+        applySortAndFilter(currentSortOrder, currentRoleFilter)
     }
 }
