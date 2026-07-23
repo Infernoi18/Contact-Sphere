@@ -94,24 +94,6 @@ abstract class BaseContactFragment : Fragment() {
         }
     }
 
-//    private fun refreshData() {
-//        adapter.updateList(getContactsList())
-//        updateEmptyState()
-//        (activity as? MainActivity)?.refreshContacts()
-//        adapter.notifyDataSetChanged()
-//        binding.recyclerView.adapter = adapter
-//        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
-//        binding.recyclerView.adapter?.notifyDataSetChanged()
-//        binding.recyclerView.layoutManager?.scrollToPosition(0)
-//        updateEmptyState()
-//        adapter.notifyDataSetChanged()
-//        binding.recyclerView.adapter?.notifyDataSetChanged()
-//        binding.recyclerView.layoutManager?.scrollToPosition(0)
-//        updateEmptyState()
-//
-//    }
-
-
     fun refreshData() {
         adapter.updateList(getContactsList())
         updateEmptyState()
