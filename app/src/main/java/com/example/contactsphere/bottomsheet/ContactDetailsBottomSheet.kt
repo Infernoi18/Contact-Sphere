@@ -1,5 +1,7 @@
 package com.example.contactsphere.bottomsheet
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,22 +16,26 @@ class ContactDetailsBottomSheet : BottomSheetDialogFragment() {
     private var _binding: BottomSheetContactDetailsBinding? = null
     private val binding get() = _binding!!
 
-    private var isExpanded = false
+    private var contactId: String? = null
+    private var name: String? = null
+    private var phone: String? = null
+    private var role: String? = null
+    private var bio: String? = null
+    private var isFavorite: Boolean = false
 
     companion object {
-        const val TAG = "ContactDetailsBottomSheet"
         private const val ARG_ID = "arg_id"
         private const val ARG_NAME = "arg_name"
-        private const val ARG_ROLE = "arg_role"
         private const val ARG_PHONE = "arg_phone"
+        private const val ARG_ROLE = "arg_role"
         private const val ARG_BIO = "arg_bio"
-        private const val ARG_IS_FAVORITE = "arg_is_favorite"
+        private const val ARG_FAVORITE = "arg_favorite"
 
         fun newInstance(
             id: String,
             name: String,
-            role: String,
             phone: String,
+            role: String,
             bio: String,
             isFavorite: Boolean
         ): ContactDetailsBottomSheet {
@@ -37,13 +43,25 @@ class ContactDetailsBottomSheet : BottomSheetDialogFragment() {
             val args = Bundle().apply {
                 putString(ARG_ID, id)
                 putString(ARG_NAME, name)
-                putString(ARG_ROLE, role)
                 putString(ARG_PHONE, phone)
+                putString(ARG_ROLE, role)
                 putString(ARG_BIO, bio)
-                putBoolean(ARG_IS_FAVORITE, isFavorite)
+                putBoolean(ARG_FAVORITE, isFavorite)
             }
             fragment.arguments = args
             return fragment
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            contactId = it.getString(ARG_ID)
+            name = it.getString(ARG_NAME)
+            phone = it.getString(ARG_PHONE)
+            role = it.getString(ARG_ROLE)
+            bio = it.getString(ARG_BIO)
+            isFavorite = it.getBoolean(ARG_FAVORITE)
         }
     }
 
@@ -59,27 +77,14 @@ class ContactDetailsBottomSheet : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val id = arguments?.getString(ARG_ID) ?: ""
-        val name = arguments?.getString(ARG_NAME) ?: ""
-        val role = arguments?.getString(ARG_ROLE) ?: ""
-        val phone = arguments?.getString(ARG_PHONE) ?: ""
-        val bio = arguments?.getString(ARG_BIO) ?: ""
-        var isFavorite = arguments?.getBoolean(ARG_IS_FAVORITE) ?: false
-
         binding.tvBsName.text = name
-        binding.tvBsRole.text = role
         binding.tvBsPhone.text = phone
+        binding.tvBsRole.text = role
         binding.tvBsBio.text = bio
 
-        val updateFavoriteUI = { fav: Boolean ->
-            if (fav) {
-                binding.ivFavorite.setImageResource(R.drawable.ic_star_filled)
-            } else {
-                binding.ivFavorite.setImageResource(R.drawable.ic_star_outline)
-            }
-        }
-
         updateFavoriteUI(isFavorite)
+
+        val id = contactId ?: return
 
         binding.ivFavorite.setOnClickListener {
             com.example.contactsphere.utils.DummyDataProvider.toggleFavorite(requireContext(), id)
@@ -88,21 +93,28 @@ class ContactDetailsBottomSheet : BottomSheetDialogFragment() {
             (activity as? MainActivity)?.refreshContacts()
         }
 
-        binding.tvReadMore.setOnClickListener {
-            if (isExpanded) {
-                binding.tvBsBio.maxLines = 2
-                binding.tvReadMore.text = getString(R.string.read_more)
-                isExpanded = false
-            } else {
-                binding.tvBsBio.maxLines = Int.MAX_VALUE
-                binding.tvReadMore.text = getString(R.string.read_less)
-                isExpanded = true
+        binding.btnCall.setOnClickListener {
+            phone?.let { num ->
+                (activity as? MainActivity)?.placeCall(num)
             }
         }
 
-        binding.btnCall.setOnClickListener {
-            dismiss()
-            (activity as? MainActivity)?.placeCall(phone)
+        binding.tvReadMore.setOnClickListener {
+            if (binding.tvBsBio.maxLines == 3) {
+                binding.tvBsBio.maxLines = Int.MAX_VALUE
+                binding.tvReadMore.text = getString(R.string.read_less)
+            } else {
+                binding.tvBsBio.maxLines = 3
+                binding.tvReadMore.text = getString(R.string.read_more)
+            }
+        }
+    }
+
+    private fun updateFavoriteUI(favorite: Boolean) {
+        if (favorite) {
+            binding.ivFavorite.setImageResource(R.drawable.ic_star_filled)
+        } else {
+            binding.ivFavorite.setImageResource(R.drawable.ic_star_outline)
         }
     }
 
