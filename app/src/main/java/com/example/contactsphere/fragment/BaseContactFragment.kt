@@ -12,14 +12,16 @@ import com.example.contactsphere.adapter.ContactAdapter
 import com.example.contactsphere.bottomsheet.ContactDetailsBottomSheet
 import com.example.contactsphere.databinding.FragmentContactListBinding
 import com.example.contactsphere.model.Contact
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 abstract class BaseContactFragment : Fragment() {
 
     private var _binding: FragmentContactListBinding? = null
     protected val binding get() = _binding!!
+
     protected lateinit var adapter: ContactAdapter
 
-    abstract fun getContactsList(): List<Contact>
+    abstract fun getContacts(): List<Contact>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,11 +34,23 @@ abstract class BaseContactFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupRecyclerView()
+        observeData()
+    }
 
+    private fun setupRecyclerView() {
         adapter = ContactAdapter(
-            fullList = getContactsList(),
+            fullList = getContacts(),
             onItemClick = { contact ->
-                showContactBottomSheet(contact)
+                val bottomSheet = ContactDetailsBottomSheet.newInstance(
+                    contact.id,
+                    contact.name,
+                    contact.phone,
+                    contact.role,
+                    contact.bio,
+                    contact.isFavorite
+                )
+                bottomSheet.show(parentFragmentManager, "ContactDetails")
             },
             onItemLongClick = { contact ->
                 showDeleteConfirmation(contact)
@@ -49,16 +63,32 @@ abstract class BaseContactFragment : Fragment() {
                 (activity as? MainActivity)?.refreshContacts()
             }
         )
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerView.adapter = adapter
+        updateEmptyState()
+    }
 
-        binding.recyclerView.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = this@BaseContactFragment.adapter
-        }
-
+    private fun observeData() {
         com.example.contactsphere.utils.DummyDataProvider.contacts.observe(viewLifecycleOwner) {
             refreshData()
         }
+    }
 
+    private fun showDeleteConfirmation(contact: Contact) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(R.string.dialog_delete_title))
+            .setMessage(getString(R.string.dialog_delete_message, contact.name))
+            .setNegativeButton(getString(R.string.btn_cancel), null)
+            .setPositiveButton(getString(R.string.btn_delete)) { _, _ ->
+                com.example.contactsphere.utils.DummyDataProvider.deleteContact(requireContext(), contact.id)
+                refreshData()
+            }
+            .show()
+    }
+
+    fun refreshData() {
+        val updatedList = getContacts()
+        adapter.updateList(updatedList)
         updateEmptyState()
     }
 
@@ -72,18 +102,6 @@ abstract class BaseContactFragment : Fragment() {
         updateEmptyState()
     }
 
-    private fun showDeleteConfirmation(contact: Contact) {
-        com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
-            .setTitle(getString(R.string.dialog_delete_title))
-            .setMessage(getString(R.string.dialog_delete_message, contact.name))
-            .setPositiveButton(getString(R.string.btn_delete)) { _, _ ->
-                com.example.contactsphere.utils.DummyDataProvider.deleteContact(requireContext(), contact.id)
-                refreshData()
-            }
-            .setNegativeButton(getString(R.string.btn_cancel), null)
-            .show()
-    }
-
     private fun updateEmptyState() {
         if (adapter.itemCount == 0) {
             binding.tvEmptyState.visibility = View.VISIBLE
@@ -92,23 +110,6 @@ abstract class BaseContactFragment : Fragment() {
             binding.tvEmptyState.visibility = View.GONE
             binding.recyclerView.visibility = View.VISIBLE
         }
-    }
-
-    fun refreshData() {
-        adapter.updateList(getContactsList())
-        updateEmptyState()
-    }
-
-    private fun showContactBottomSheet(contact: Contact) {
-        val bottomSheet = ContactDetailsBottomSheet.newInstance(
-            id = contact.id,
-            name = contact.name,
-            role = contact.role,
-            phone = contact.phone,
-            bio = contact.bio,
-            isFavorite = contact.isFavorite
-        )
-        bottomSheet.show(childFragmentManager, ContactDetailsBottomSheet.TAG)
     }
 
     override fun onDestroyView() {
